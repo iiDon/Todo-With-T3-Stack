@@ -18,12 +18,25 @@ import { CheckIcon, InfoIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import { trpc } from "../utils/trpc";
 import EditTodo from "../../components/EditTodo";
 const Home = () => {
+  const utils = trpc.useContext();
   const data = trpc.useQuery(["todo.getAll"]);
-  let title = useRef<HTMLInputElement>(null);
-  let descreption = useRef<HTMLTextAreaElement>(null);
-  const newTodo = trpc.useMutation(["todo.add"]);
-  const deleteTodo = trpc.useMutation(["todo.delete"]);
-  const state = trpc.useMutation(["todo.state"]);
+  const title = useRef<HTMLInputElement>(null);
+  const descreption = useRef<HTMLTextAreaElement>(null);
+  const newTodo = trpc.useMutation(["todo.add"], {
+    onSuccess: () => {
+      utils.invalidateQueries("todo.getAll");
+    },
+  });
+  const deleteTodo = trpc.useMutation(["todo.delete"], {
+    onSuccess: () => {
+      utils.invalidateQueries("todo.getAll");
+    },
+  });
+  const state = trpc.useMutation(["todo.state"], {
+    onSuccess: () => {
+      utils.invalidateQueries("todo.getAll");
+    },
+  });
   if (data.isLoading) return <p>Loading...</p>;
   if (data.isError) return <p>{JSON.stringify(data.isError)}</p>;
 
@@ -42,8 +55,10 @@ const Home = () => {
     }
   };
 
-  const handleState = (id: string) => {
+  const handleState = (id: string): void => {
     state.mutate(id);
+    utils.invalidateQueries("todo.getAll");
+    utils.refetchQueries('')
   };
 
   const handleDelete = (id: string): void => {
@@ -149,7 +164,9 @@ const Home = () => {
                 <Flex>
                   <ListIcon as={CheckIcon} color="green.500" />
                   <Box>
-                    <Text fontSize={20}>{todo.title}</Text>
+                    <span className="line-through">
+                      <Text fontSize={20}>{todo.title}</Text>
+                    </span>
                     <Text ml={8}>{todo.descreption}</Text>
                   </Box>
                   <Spacer />
