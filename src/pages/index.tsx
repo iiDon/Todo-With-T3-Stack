@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import {
   Container,
   Text,
@@ -13,11 +13,14 @@ import {
   Spacer,
   Grid,
   GridItem,
+  useDisclosure,
+  Slide
 } from "@chakra-ui/react";
 import { CheckIcon, InfoIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import { trpc } from "../utils/trpc";
 import EditTodo from "../../components/EditTodo";
 const Home = () => {
+  const { isOpen, onToggle } = useDisclosure()
   const utils = trpc.useContext();
   const data = trpc.useQuery(["todo.getAll"]);
   const title = useRef<HTMLInputElement>(null);
@@ -58,7 +61,8 @@ const Home = () => {
   const handleState = (id: string): void => {
     state.mutate(id);
     utils.invalidateQueries("todo.getAll");
-    utils.refetchQueries('')
+
+
   };
 
   const handleDelete = (id: string): void => {
@@ -86,6 +90,7 @@ const Home = () => {
         Add A New Todo
       </Button>
 
+
       <List spacing={3} my={12}>
         <Text my={2} align="center" fontSize="xl">
           To Do
@@ -98,6 +103,8 @@ const Home = () => {
           ?.filter((todo) => todo.isDone === false)
           .map((todo) => {
             return (
+
+              
               <ListItem
                 onDoubleClick={() => handleState(todo.id)}
                 key={todo.id}
@@ -136,6 +143,7 @@ const Home = () => {
             );
           })}
       </List>
+
 
       <Grid>
         <GridItem w="100%" h="1" bg="gray.500" />

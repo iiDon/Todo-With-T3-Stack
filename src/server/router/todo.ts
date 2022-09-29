@@ -61,7 +61,7 @@ export const todoRouter = createRouter()
   .mutation("state", {
     input: z.string(),
     resolve: async ({ ctx, input }) => {
-      const Todo = ctx.prisma.todo
+      await ctx.prisma.todo
         .findUnique({
           where: {
             id: input,
