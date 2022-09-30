@@ -172,9 +172,7 @@ const Home = () => {
                 <Flex>
                   <ListIcon as={CheckIcon} color="green.500" />
                   <Box>
-                    <span className="line-through">
-                      <Text fontSize={20}>{todo.title}</Text>
-                    </span>
+                      <Text textDecoration={'line-through'} fontSize={20}>{todo.title}</Text>
                     <Text ml={8}>{todo.descreption}</Text>
                   </Box>
                   <Spacer />
